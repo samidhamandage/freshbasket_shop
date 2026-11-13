@@ -1,6 +1,6 @@
 'use client';
 
-import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
+import React, { createContext, useContext, useEffect, useState, useCallback, useRef } from 'react';
 import toast from 'react-hot-toast';
 import { CartItem } from '@/types';
 
@@ -27,13 +27,16 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     const [couponCode, setCouponCode] = useState<string | null>(null);
     const [discount, setDiscount] = useState(0);
     const [mounted, setMounted] = useState(false);
+    const itemsRef = useRef<CartItem[]>(items);
 
     useEffect(() => {
         setMounted(true);
         const saved = localStorage.getItem('freshbasket-cart');
         if (saved) {
             try {
-                setItems(JSON.parse(saved));
+                const parsed = JSON.parse(saved);
+                setItems(parsed);
+                itemsRef.current = parsed;
             } catch {
                 localStorage.removeItem('freshbasket-cart');
             }
@@ -51,55 +54,59 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     }, []);
 
     useEffect(() => {
+        itemsRef.current = items;
         if (mounted) {
             localStorage.setItem('freshbasket-cart', JSON.stringify(items));
         }
     }, [items, mounted]);
 
     const addItem = useCallback((item: Omit<CartItem, 'quantity'>) => {
-        setItems((prev) => {
-            const existing = prev.find((i) => i.id === item.id);
-            if (existing) {
-                if (existing.quantity >= item.stock) {
-                    toast.error('Maximum stock reached');
-                    return prev;
-                }
-                toast.success(`Updated ${item.name} quantity`);
-                return prev.map((i) =>
-                    i.id === item.id ? { ...i, quantity: i.quantity + 1 } : i
-                );
+        const currentItems = itemsRef.current;
+        const existing = currentItems.find((i) => i.id === item.id);
+        if (existing) {
+            if (existing.quantity >= item.stock) {
+                toast.error('Maximum stock reached', { id: `cart-${item.id}` });
+                return;
             }
-            toast.success(`Added ${item.name} to cart`);
-            return [...prev, { ...item, quantity: 1 }];
-        });
+            toast.success(`Updated ${item.name} quantity`, { id: `cart-${item.id}` });
+            const updated = currentItems.map((i) =>
+                i.id === item.id ? { ...i, quantity: i.quantity + 1 } : i
+            );
+            itemsRef.current = updated;
+            setItems(updated);
+        } else {
+            toast.success(`Added ${item.name} to cart`, { id: `cart-${item.id}` });
+            const updated = [...currentItems, { ...item, quantity: 1 }];
+            itemsRef.current = updated;
+            setItems(updated);
+        }
     }, []);
 
     const removeItem = useCallback((id: string) => {
-        setItems((prev) => {
-            const item = prev.find((i) => i.id === id);
-            if (item) toast.success(`Removed ${item.name} from cart`);
-            return prev.filter((i) => i.id !== id);
-        });
+        const item = itemsRef.current.find((i) => i.id === id);
+        if (item) toast.success(`Removed ${item.name} from cart`, { id: `cart-${id}` });
+        const updated = itemsRef.current.filter((i) => i.id !== id);
+        itemsRef.current = updated;
+        setItems(updated);
     }, []);
 
     const updateQuantity = useCallback((id: string, quantity: number) => {
         if (quantity < 1) return;
-        setItems((prev) =>
-            prev.map((item) => {
-                if (item.id === id) {
-                    if (quantity > item.stock) {
-                        toast.error('Maximum stock reached');
-                        return item;
-                    }
-                    return { ...item, quantity };
-                }
-                return item;
-            })
+        const item = itemsRef.current.find((i) => i.id === id);
+        if (item && quantity > item.stock) {
+            toast.error('Maximum stock reached', { id: `cart-${id}` });
+            return;
+        }
+        const updated = itemsRef.current.map((i) =>
+            i.id === id ? { ...i, quantity } : i
         );
+        itemsRef.current = updated;
+        setItems(updated);
     }, []);
 
     const clearCart = useCallback(() => {
         setItems([]);
+        itemsRef.current = [];
         setCouponCode(null);
         setDiscount(0);
         localStorage.removeItem('freshbasket-coupon');

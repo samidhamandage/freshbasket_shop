@@ -91,7 +91,10 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     }, []);
 
     const updateQuantity = useCallback((id: string, quantity: number) => {
-        if (quantity < 1) return;
+        if (quantity < 1) {
+            removeItem(id);
+            return;
+        }
         const item = itemsRef.current.find((i) => i.id === id);
         if (item && quantity > item.stock) {
             toast.error('Maximum stock reached', { id: `cart-${id}` });
@@ -102,7 +105,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         );
         itemsRef.current = updated;
         setItems(updated);
-    }, []);
+    }, [removeItem]);
 
     const clearCart = useCallback(() => {
         setItems([]);

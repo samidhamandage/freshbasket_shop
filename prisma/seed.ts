@@ -148,11 +148,23 @@ async function main() {
         { name: 'Shrimp', slug: 'wild-caught-shrimp', description: 'Wild-caught jumbo shrimp, peeled and deveined. Sweet, tender, and perfect for shrimp scampi or cocktail.', price: 14.99, images: 'https://images.unsplash.com/photo-1565680018434-b513d5e5fd47?w=600', categoryId: categories[3].id, stock: 20, unit: 'bag', weight: '1 lb', rating: 4.6, reviewCount: 67 },
     ];
 
-    for (const product of products) {
+    const USD_TO_INR = 83;
+
+    for (const rawProduct of products) {
+        const product = {
+            ...rawProduct,
+            price: Math.round(rawProduct.price * USD_TO_INR * 100) / 100,
+            comparePrice: rawProduct.comparePrice
+                ? Math.round(rawProduct.comparePrice * USD_TO_INR * 100) / 100
+                : null,
+        };
         const stockStatus = product.stock === 0 ? 'OUT_OF_STOCK' : product.stock < 10 ? 'LOW_STOCK' : 'IN_STOCK';
         await prisma.product.upsert({
             where: { slug: product.slug },
-            update: {},
+            update: {
+                price: product.price,
+                comparePrice: product.comparePrice,
+            },
             create: { ...product, stockStatus },
         });
     }
@@ -160,36 +172,39 @@ async function main() {
     // Create coupons
     await prisma.coupon.upsert({
         where: { code: 'FRESH10' },
-        update: {},
+        update: { minOrder: Math.round(25 * USD_TO_INR) },
         create: {
             code: 'FRESH10',
             discount: 10,
             type: 'percentage',
-            minOrder: 25,
+            minOrder: Math.round(25 * USD_TO_INR),
             maxUses: 1000,
         },
     });
 
     await prisma.coupon.upsert({
         where: { code: 'SAVE5' },
-        update: {},
+        update: {
+            discount: Math.round(5 * USD_TO_INR),
+            minOrder: Math.round(30 * USD_TO_INR),
+        },
         create: {
             code: 'SAVE5',
-            discount: 5,
+            discount: Math.round(5 * USD_TO_INR),
             type: 'fixed',
-            minOrder: 30,
+            minOrder: Math.round(30 * USD_TO_INR),
             maxUses: 500,
         },
     });
 
     await prisma.coupon.upsert({
         where: { code: 'WELCOME20' },
-        update: {},
+        update: { minOrder: Math.round(50 * USD_TO_INR) },
         create: {
             code: 'WELCOME20',
             discount: 20,
             type: 'percentage',
-            minOrder: 50,
+            minOrder: Math.round(50 * USD_TO_INR),
             maxUses: 200,
         },
     });

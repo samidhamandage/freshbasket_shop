@@ -144,7 +144,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
     const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
     const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
-    const deliveryFee = subtotal > 50 ? 0 : subtotal > 0 ? 5.99 : 0;
+    const deliveryFee = subtotal > 4150 ? 0 : subtotal > 0 ? 497 : 0;
     const total = Math.max(0, subtotal + deliveryFee - discount);
 
     if (!mounted) return null;

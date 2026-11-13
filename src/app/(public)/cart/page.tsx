@@ -136,9 +136,9 @@ export default function CartPage() {
                                     <span className="font-medium">-{formatPrice(discount)}</span>
                                 </div>
                             )}
-                            {subtotal > 0 && subtotal < 50 && (
+                            {subtotal > 0 && subtotal < 4150 && (
                                 <p className="text-xs text-charcoal-500 bg-charcoal-50 rounded-lg p-2">
-                                    Add {formatPrice(50 - subtotal)} more for free delivery!
+                                    Add {formatPrice(4150 - subtotal)} more for free delivery!
                                 </p>
                             )}
                             <div className="border-t border-charcoal-100 pt-3 flex justify-between">

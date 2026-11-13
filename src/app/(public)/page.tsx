@@ -113,7 +113,7 @@ export default async function HomePage() {
                 <div className="container-custom py-6">
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
                         {[
-                            { icon: Truck, label: 'Free Delivery', sub: 'On orders over ₹50' },
+                            { icon: Truck, label: 'Free Delivery', sub: 'On orders over ₹4,150' },
                             { icon: Clock, label: 'Same Day', sub: 'Express delivery' },
                             { icon: Shield, label: 'Secure', sub: '100% safe checkout' },
                             { icon: Sparkles, label: 'AI Smart', sub: 'Personalized picks' },

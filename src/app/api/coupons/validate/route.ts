@@ -26,7 +26,7 @@ export async function POST(request: NextRequest) {
         if (subtotal < coupon.minOrder) {
             return NextResponse.json({
                 valid: false,
-                message: `Minimum order of $${coupon.minOrder.toFixed(2)} required`,
+                message: `Minimum order of ₹${coupon.minOrder.toFixed(2)} required`,
             });
         }
 
@@ -39,7 +39,7 @@ export async function POST(request: NextRequest) {
             valid: true,
             discount: Math.min(discount, subtotal),
             type: coupon.type,
-            message: `Coupon applied! ${coupon.type === 'percentage' ? `${coupon.discount}% off` : `$${coupon.discount} off`}`,
+            message: `Coupon applied! ${coupon.type === 'percentage' ? `${coupon.discount}% off` : `₹${coupon.discount} off`}`,
         });
     } catch {
         return NextResponse.json({ valid: false, message: 'Failed to validate coupon' });

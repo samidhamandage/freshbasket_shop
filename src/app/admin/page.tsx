@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import {
-    DollarSign, ShoppingCart, Users, Package,
+    IndianRupee, ShoppingCart, Users, Package,
     TrendingUp, Clock,
 } from 'lucide-react';
 import { formatPrice, formatDateTime, getOrderStatusLabel } from '@/utils';
@@ -67,7 +67,7 @@ export default function AdminDashboardPage() {
     }
 
     const stats = [
-        { label: 'Total Revenue', value: formatPrice(data.totalRevenue), icon: DollarSign, color: 'bg-primary-50 text-primary-700' },
+        { label: 'Total Revenue', value: formatPrice(data.totalRevenue), icon: IndianRupee, color: 'bg-primary-50 text-primary-700' },
         { label: 'Total Orders', value: data.totalOrders.toLocaleString(), icon: ShoppingCart, color: 'bg-emerald-50 text-emerald-700' },
         { label: 'Total Users', value: data.totalUsers.toLocaleString(), icon: Users, color: 'bg-amber-50 text-amber-700' },
         { label: 'Total Products', value: data.totalProducts.toLocaleString(), icon: Package, color: 'bg-charcoal-50 text-charcoal-700' },

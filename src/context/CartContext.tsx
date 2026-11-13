@@ -124,7 +124,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
                 setCouponCode(code);
                 setDiscount(data.discount);
                 localStorage.setItem('freshbasket-coupon', JSON.stringify({ code, discount: data.discount }));
-                toast.success(`Coupon applied! You save $${data.discount.toFixed(2)}`);
+                toast.success(`Coupon applied! You save ₹${data.discount.toFixed(2)}`);
                 return true;
             }
             toast.error(data.message || 'Invalid coupon');

@@ -25,7 +25,7 @@ export default function Footer() {
                                 ✨ AI Powered
                             </span>
                             <span className="px-3 py-1.5 bg-emerald-900/30 text-emerald-400 text-xs font-semibold rounded-full">
-                                🚚 Free Delivery $50+
+                                🚚 Free Delivery ₹50+
                             </span>
                         </div>
                     </div>

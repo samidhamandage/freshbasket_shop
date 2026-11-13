@@ -164,7 +164,7 @@ export default async function ProductPage({ params }: Props) {
                     <div className="mt-8 pt-8 border-t border-charcoal-100">
                         <div className="grid grid-cols-2 gap-4">
                             {[
-                                { label: 'Free Delivery', sub: 'On orders over $50' },
+                                { label: 'Free Delivery', sub: 'On orders over ₹50' },
                                 { label: 'Fresh Guarantee', sub: 'Quality assured' },
                                 { label: 'Easy Returns', sub: '7-day return policy' },
                                 { label: 'Secure Payment', sub: 'SSL encrypted' },

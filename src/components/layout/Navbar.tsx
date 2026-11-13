@@ -35,7 +35,7 @@ export default function Navbar() {
     return (
         <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-charcoal-100 shadow-sm">
             <div className="container-custom">
-                <div className="flex items-center justify-between h-16 md:h-20">
+                <div className="flex items-center justify-between h-16">
                     {/* Logo */}
                     <Link href="/" className="flex items-center gap-2 group">
                         <div className="w-10 h-10 bg-primary-900 rounded-xl flex items-center justify-center group-hover:bg-primary-800 transition-colors">

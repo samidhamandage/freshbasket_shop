@@ -54,28 +54,28 @@ export default async function HomePage() {
             {/* Hero Section */}
             <section className="relative overflow-hidden bg-gradient-to-br from-primary-900 via-primary-800 to-emerald-800">
                 <div className="absolute inset-0 opacity-10">
-                    <div className="absolute top-20 left-10 w-72 h-72 bg-white rounded-full blur-3xl" />
+                    <div className="absolute top-10 left-10 w-72 h-72 bg-white rounded-full blur-3xl" />
                     <div className="absolute bottom-10 right-20 w-96 h-96 bg-emerald-300 rounded-full blur-3xl" />
                 </div>
-                <div className="container-custom relative py-20 md:py-28 lg:py-36">
-                    <div className="grid lg:grid-cols-2 gap-12 items-center">
+                <div className="container-custom relative py-8 md:py-10 lg:py-12">
+                    <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
                         <div className="animate-fade-in">
-                            <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm text-white/90 px-4 py-2 rounded-full text-sm font-medium mb-6">
+                            <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm text-white/90 px-4 py-1.5 rounded-full text-sm font-medium mb-4">
                                 <Sparkles className="w-4 h-4 text-emerald-300" />
                                 AI-Powered Smart Grocery Shopping
                             </div>
-                            <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight mb-6">
+                            <h1 className="font-display text-3xl md:text-5xl lg:text-5xl font-bold text-white leading-tight mb-4">
                                 Fresh Groceries,{' '}
                                 <span className="text-emerald-300">Delivered</span> Intelligently
                             </h1>
-                            <p className="text-lg text-white/70 mb-8 max-w-lg leading-relaxed">
+                            <p className="text-base md:text-lg text-white/70 mb-6 max-w-lg leading-relaxed">
                                 Experience AI-curated recommendations, real-time order tracking,
                                 and premium quality products — all delivered to your doorstep.
                             </p>
                             <div className="flex flex-wrap gap-4">
                                 <Link
                                     href="/shop"
-                                    className="inline-flex items-center gap-2 bg-white text-primary-900 px-8 py-4 rounded-xl font-bold text-base
+                                    className="inline-flex items-center gap-2 bg-white text-primary-900 px-6 py-3 rounded-xl font-bold text-base
                     hover:bg-emerald-50 transition-all duration-200 shadow-lg shadow-black/10"
                                 >
                                     Shop Now
@@ -84,7 +84,7 @@ export default async function HomePage() {
                                 <Link
                                     href="/shop?featured=true"
                                     className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm text-white border border-white/20
-                    px-8 py-4 rounded-xl font-semibold text-base hover:bg-white/20 transition-all duration-200"
+                    px-6 py-3 rounded-xl font-semibold text-base hover:bg-white/20 transition-all duration-200"
                                 >
                                     View Deals
                                 </Link>
@@ -93,7 +93,7 @@ export default async function HomePage() {
                         <div className="hidden lg:block">
                             <div className="relative">
                                 <div className="absolute -inset-4 bg-gradient-to-br from-emerald-400/20 to-primary-600/20 rounded-3xl blur-2xl" />
-                                <div className="relative w-full aspect-square rounded-3xl overflow-hidden shadow-2xl">
+                                <div className="relative w-full aspect-[4/3] rounded-3xl overflow-hidden shadow-2xl">
                                     <Image
                                         src="https://images.unsplash.com/photo-1542838132-92c53300491e?w=700"
                                         alt="Fresh groceries"

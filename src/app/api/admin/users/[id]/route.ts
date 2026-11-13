@@ -13,6 +13,15 @@ export async function PATCH(
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
         }
 
+        const targetUser = await prisma.user.findUnique({
+            where: { id: params.id },
+            select: { role: true },
+        });
+
+        if (!targetUser || targetUser.role === 'ADMIN') {
+            return NextResponse.json({ error: 'Admin accounts cannot be managed or blocked' }, { status: 403 });
+        }
+
         const body = await request.json();
         const data: Record<string, unknown> = {};
 

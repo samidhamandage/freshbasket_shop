@@ -80,17 +80,19 @@ export default function Navbar() {
                         </Link>
 
                         {/* Cart */}
-                        <Link
-                            href="/cart"
-                            className="relative px-3 py-2 text-charcoal-600 hover:text-primary-900 hover:bg-primary-50 rounded-xl transition-all"
-                        >
-                            <ShoppingCart className="w-5 h-5" />
-                            {totalItems > 0 && (
-                                <span className="absolute -top-0.5 -right-0.5 w-5 h-5 bg-primary-900 text-white text-[11px] font-bold rounded-full flex items-center justify-center animate-scale-in">
-                                    {totalItems}
-                                </span>
-                            )}
-                        </Link>
+                        {!isAdmin && (
+                            <Link
+                                href="/cart"
+                                className="relative px-3 py-2 text-charcoal-600 hover:text-primary-900 hover:bg-primary-50 rounded-xl transition-all"
+                            >
+                                <ShoppingCart className="w-5 h-5" />
+                                {totalItems > 0 && (
+                                    <span className="absolute -top-0.5 -right-0.5 w-5 h-5 bg-primary-900 text-white text-[11px] font-bold rounded-full flex items-center justify-center animate-scale-in">
+                                        {totalItems}
+                                    </span>
+                                )}
+                            </Link>
+                        )}
 
                         {/* Auth */}
                         {session ? (
@@ -154,14 +156,16 @@ export default function Navbar() {
 
                     {/* Mobile Toggle */}
                     <div className="flex items-center gap-3 md:hidden">
-                        <Link href="/cart" className="relative p-2">
-                            <ShoppingCart className="w-5 h-5 text-charcoal-700" />
-                            {totalItems > 0 && (
-                                <span className="absolute -top-0.5 -right-0.5 w-5 h-5 bg-primary-900 text-white text-[11px] font-bold rounded-full flex items-center justify-center">
-                                    {totalItems}
-                                </span>
-                            )}
-                        </Link>
+                        {!isAdmin && (
+                            <Link href="/cart" className="relative p-2">
+                                <ShoppingCart className="w-5 h-5 text-charcoal-700" />
+                                {totalItems > 0 && (
+                                    <span className="absolute -top-0.5 -right-0.5 w-5 h-5 bg-primary-900 text-white text-[11px] font-bold rounded-full flex items-center justify-center">
+                                        {totalItems}
+                                    </span>
+                                )}
+                            </Link>
+                        )}
                         <button
                             onClick={() => setMobileOpen(!mobileOpen)}
                             className="p-2 text-charcoal-700"

@@ -7,7 +7,7 @@ import {
 } from 'lucide-react';
 import { formatPrice, formatDateTime, getOrderStatusLabel } from '@/utils';
 import {
-    BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip,
+    BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend,
     ResponsiveContainer, PieChart, Pie, Cell,
 } from 'recharts';
 
@@ -24,7 +24,7 @@ type DashboardData = {
         user?: { name: string | null; email: string };
         items: Array<{ name: string }>;
     }>;
-    monthlyRevenue: Array<{ month: string; revenue: number; orders: number }>;
+    monthlyRevenue: Array<{ month: string; revenue: number; refunded: number; orders: number; refundedOrders?: number }>;
     ordersByStatus: Array<{ status: string; count: number }>;
 };
 
@@ -105,18 +105,23 @@ export default function AdminDashboardPage() {
             <div className="grid lg:grid-cols-3 gap-6">
                 {/* Revenue Chart */}
                 <div className="lg:col-span-2 card p-6">
-                    <h2 className="text-lg font-semibold text-charcoal-900 mb-6">Monthly Revenue</h2>
+                    <h2 className="text-lg font-semibold text-charcoal-900 mb-6">Monthly Revenue &amp; Refund Trends</h2>
                     <ResponsiveContainer width="100%" height={300}>
                         <BarChart data={data.monthlyRevenue}>
                             <CartesianGrid strokeDasharray="3 3" stroke="#E0E0E0" />
                             <XAxis dataKey="month" tick={{ fontSize: 12 }} />
-                            <YAxis tick={{ fontSize: 12 }} tickFormatter={(v) => `$${v}`} />
+                            <YAxis tick={{ fontSize: 12 }} tickFormatter={(v) => `₹${v}`} />
                             <Tooltip
                                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                                formatter={(value: any) => [`$${Number(value).toFixed(2)}`, 'Revenue']}
+                                formatter={(value: any, name: any) => [
+                                    formatPrice(Number(value)),
+                                    name === 'refunded' || name === 'Refunded' ? 'Refunded Amount' : 'Revenue',
+                                ]}
                                 contentStyle={{ borderRadius: '12px', border: '1px solid #E0E0E0' }}
                             />
-                            <Bar dataKey="revenue" fill="#1B5E20" radius={[6, 6, 0, 0]} />
+                            <Legend wrapperStyle={{ paddingTop: '10px' }} />
+                            <Bar dataKey="revenue" name="Revenue" fill="#1B5E20" radius={[6, 6, 0, 0]} />
+                            <Bar dataKey="refunded" name="Refunded" fill="#EF4444" radius={[6, 6, 0, 0]} />
                         </BarChart>
                     </ResponsiveContainer>
                 </div>

@@ -67,21 +67,33 @@ export class InventoryService {
 
         for (let i = months - 1; i >= 0; i--) {
             const start = new Date(now.getFullYear(), now.getMonth() - i, 1);
-            const end = new Date(now.getFullYear(), now.getMonth() - i + 1, 0);
+            const end = new Date(now.getFullYear(), now.getMonth() - i + 1, 0, 23, 59, 59, 999);
 
-            const orders = await prisma.order.aggregate({
-                where: {
-                    createdAt: { gte: start, lte: end },
-                    status: { notIn: ['CANCELLED', 'REFUNDED'] },
-                },
-                _sum: { total: true },
-                _count: true,
-            });
+            const [orders, refundedOrders] = await Promise.all([
+                prisma.order.aggregate({
+                    where: {
+                        createdAt: { gte: start, lte: end },
+                        status: { notIn: ['CANCELLED', 'REFUNDED'] },
+                    },
+                    _sum: { total: true },
+                    _count: true,
+                }),
+                prisma.order.aggregate({
+                    where: {
+                        createdAt: { gte: start, lte: end },
+                        status: 'REFUNDED',
+                    },
+                    _sum: { total: true },
+                    _count: true,
+                }),
+            ]);
 
             results.push({
                 month: start.toLocaleString('default', { month: 'short', year: 'numeric' }),
-                revenue: orders._sum.total || 0,
+                revenue: Math.round((orders._sum.total || 0) * 100) / 100,
+                refunded: Math.round((refundedOrders._sum.total || 0) * 100) / 100,
                 orders: orders._count,
+                refundedOrders: refundedOrders._count,
             });
         }
 

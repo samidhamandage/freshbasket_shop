@@ -54,8 +54,10 @@ export default function AdminUsersPage() {
     };
 
     const filtered = users.filter(u =>
-        u.email.toLowerCase().includes(search.toLowerCase()) ||
-        (u.name && u.name.toLowerCase().includes(search.toLowerCase()))
+        u.role !== 'ADMIN' && (
+            u.email.toLowerCase().includes(search.toLowerCase()) ||
+            (u.name && u.name.toLowerCase().includes(search.toLowerCase()))
+        )
     );
 
     return (
@@ -107,7 +109,6 @@ export default function AdminUsersPage() {
                                                 className="text-xs border rounded-lg px-2 py-1 focus:ring-2 focus:ring-primary-500 focus:outline-none"
                                             >
                                                 <option value="USER">User</option>
-                                                <option value="ADMIN">Admin</option>
                                             </select>
                                         </td>
                                         <td className="py-3 px-4 text-charcoal-600">{user._count?.orders || 0}</td>

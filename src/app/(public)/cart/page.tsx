@@ -2,12 +2,15 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
+import { useSession } from 'next-auth/react';
 import { Minus, Plus, X, ShoppingBag, ArrowRight, Tag } from 'lucide-react';
 import { useCart } from '@/context/CartContext';
 import { formatPrice } from '@/utils';
 import { useState } from 'react';
 
 export default function CartPage() {
+    const { data: session } = useSession();
+    const isAdmin = (session?.user as Record<string, unknown>)?.role === 'ADMIN';
     const { items, removeItem, updateQuantity, subtotal, deliveryFee, discount, total, couponCode, applyCoupon, removeCoupon } = useCart();
     const [coupon, setCoupon] = useState('');
     const [applying, setApplying] = useState(false);
@@ -40,9 +43,9 @@ export default function CartPage() {
         <div className="container-custom py-8">
             <h1 className="section-title mb-8">Shopping Cart</h1>
 
-            <div className="grid lg:grid-cols-3 gap-8">
+            <div className={`grid gap-8 ${isAdmin ? 'grid-cols-1 max-w-4xl mx-auto' : 'lg:grid-cols-3'}`}>
                 {/* Cart Items */}
-                <div className="lg:col-span-2 space-y-4">
+                <div className={`space-y-4 ${isAdmin ? 'w-full' : 'lg:col-span-2'}`}>
                     {items.map((item) => (
                         <div key={item.id} className="card p-4 flex gap-4">
                             <div className="relative w-24 h-24 rounded-xl overflow-hidden bg-charcoal-50 flex-shrink-0">
@@ -80,81 +83,85 @@ export default function CartPage() {
                 </div>
 
                 {/* Order Summary */}
-                <div className="lg:col-span-1">
-                    <div className="card p-6 sticky top-24">
-                        <h2 className="text-lg font-semibold text-charcoal-900 mb-6">Order Summary</h2>
+                {!isAdmin && (
+                    <div className="lg:col-span-1">
+                        <div className="card p-6 sticky top-24">
+                            <h2 className="text-lg font-semibold text-charcoal-900 mb-6">Order Summary</h2>
 
-                        {/* Coupon */}
-                        {!couponCode ? (
-                            <div className="flex gap-2 mb-6">
-                                <div className="relative flex-1">
-                                    <Tag className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-charcoal-400" />
-                                    <input
-                                        type="text"
-                                        placeholder="Coupon code"
-                                        value={coupon}
-                                        onChange={(e) => setCoupon(e.target.value)}
-                                        className="w-full pl-9 pr-3 py-2.5 rounded-lg border border-charcoal-200 text-sm focus:ring-2 focus:ring-primary-500 focus:outline-none"
-                                    />
+                            {/* Coupon */}
+                            {!couponCode ? (
+                                <div className="flex gap-2 mb-6">
+                                    <div className="relative flex-1">
+                                        <Tag className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-charcoal-400" />
+                                        <input
+                                            type="text"
+                                            placeholder="Coupon code"
+                                            value={coupon}
+                                            onChange={(e) => setCoupon(e.target.value)}
+                                            className="w-full pl-9 pr-3 py-2.5 rounded-lg border border-charcoal-200 text-sm focus:ring-2 focus:ring-primary-500 focus:outline-none"
+                                        />
+                                    </div>
+                                    <button
+                                        onClick={handleApplyCoupon}
+                                        disabled={applying}
+                                        className="px-4 py-2.5 bg-primary-900 text-white rounded-lg text-sm font-medium hover:bg-primary-800 transition-colors disabled:opacity-50"
+                                    >
+                                        {applying ? '...' : 'Apply'}
+                                    </button>
                                 </div>
-                                <button
-                                    onClick={handleApplyCoupon}
-                                    disabled={applying}
-                                    className="px-4 py-2.5 bg-primary-900 text-white rounded-lg text-sm font-medium hover:bg-primary-800 transition-colors disabled:opacity-50"
-                                >
-                                    {applying ? '...' : 'Apply'}
-                                </button>
-                            </div>
-                        ) : (
-                            <div className="flex items-center justify-between bg-primary-50 rounded-lg px-3 py-2 mb-6">
-                                <div className="flex items-center gap-2">
-                                    <Tag className="w-4 h-4 text-primary-700" />
-                                    <span className="text-sm font-medium text-primary-900">{couponCode}</span>
+                            ) : (
+                                <div className="flex items-center justify-between bg-primary-50 rounded-lg px-3 py-2 mb-6">
+                                    <div className="flex items-center gap-2">
+                                        <Tag className="w-4 h-4 text-primary-700" />
+                                        <span className="text-sm font-medium text-primary-900">{couponCode}</span>
+                                    </div>
+                                    <button onClick={removeCoupon} className="text-xs text-red-600 hover:text-red-700">Remove</button>
                                 </div>
-                                <button onClick={removeCoupon} className="text-xs text-red-600 hover:text-red-700">Remove</button>
-                            </div>
-                        )}
+                            )}
 
-                        <div className="space-y-3 text-sm">
-                            <div className="flex justify-between">
-                                <span className="text-charcoal-600">Subtotal</span>
-                                <span className="font-medium text-charcoal-900">{formatPrice(subtotal)}</span>
-                            </div>
-                            <div className="flex justify-between">
-                                <span className="text-charcoal-600">Delivery Fee</span>
-                                <span className="font-medium text-charcoal-900">
-                                    {deliveryFee === 0 ? (
-                                        <span className="text-primary-700">Free</span>
-                                    ) : (
-                                        formatPrice(deliveryFee)
-                                    )}
-                                </span>
-                            </div>
-                            {discount > 0 && (
+                            <div className="space-y-3 text-sm">
+                                <div className="flex justify-between">
+                                    <span className="text-charcoal-600">Subtotal</span>
+                                    <span className="font-medium text-charcoal-900">{formatPrice(subtotal)}</span>
+                                </div>
+                                <div className="flex justify-between">
+                                    <span className="text-charcoal-600">Delivery Fee</span>
+                                    <span className="font-medium text-charcoal-900">
+                                        {deliveryFee === 0 ? (
+                                            <span className="text-primary-700">Free</span>
+                                        ) : (
+                                            formatPrice(deliveryFee)
+                                        )}
+                                    </span>
+                                </div>
                                 <div className="flex justify-between text-primary-700">
-                                    <span>Discount</span>
-                                    <span className="font-medium">-{formatPrice(discount)}</span>
+                                    {discount > 0 && (
+                                        <>
+                                            <span>Discount</span>
+                                            <span className="font-medium">-{formatPrice(discount)}</span>
+                                        </>
+                                    )}
                                 </div>
-                            )}
-                            {subtotal > 0 && subtotal < 4150 && (
-                                <p className="text-xs text-charcoal-500 bg-charcoal-50 rounded-lg p-2">
-                                    Add {formatPrice(4150 - subtotal)} more for free delivery!
-                                </p>
-                            )}
-                            <div className="border-t border-charcoal-100 pt-3 flex justify-between">
-                                <span className="text-base font-semibold text-charcoal-900">Total</span>
-                                <span className="text-xl font-bold text-charcoal-900">{formatPrice(total)}</span>
+                                {subtotal > 0 && subtotal < 4150 && (
+                                    <p className="text-xs text-charcoal-500 bg-charcoal-50 rounded-lg p-2">
+                                        Add {formatPrice(4150 - subtotal)} more for free delivery!
+                                    </p>
+                                )}
+                                <div className="border-t border-charcoal-100 pt-3 flex justify-between">
+                                    <span className="text-base font-semibold text-charcoal-900">Total</span>
+                                    <span className="text-xl font-bold text-charcoal-900">{formatPrice(total)}</span>
+                                </div>
                             </div>
-                        </div>
 
-                        <Link
-                            href="/checkout"
-                            className="btn-primary w-full text-center mt-6 flex items-center justify-center gap-2"
-                        >
-                            Proceed to Checkout <ArrowRight className="w-4 h-4" />
-                        </Link>
+                            <Link
+                                href="/checkout"
+                                className="btn-primary w-full text-center mt-6 flex items-center justify-center gap-2"
+                            >
+                                Proceed to Checkout <ArrowRight className="w-4 h-4" />
+                            </Link>
+                        </div>
                     </div>
-                </div>
+                )}
             </div>
         </div>
     );

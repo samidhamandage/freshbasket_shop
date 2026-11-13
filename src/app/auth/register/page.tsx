@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { signIn } from 'next-auth/react';
 import Link from 'next/link';
 import { Leaf, Mail, Lock, User, Eye, EyeOff } from 'lucide-react';
 import toast from 'react-hot-toast';
@@ -27,8 +28,14 @@ export default function RegisterPage() {
             });
             const data = await res.json();
             if (res.ok) {
-                toast.success('Account created! Please sign in.');
-                router.push('/auth/login');
+                toast.success('Account created successfully!');
+                await signIn('credentials', {
+                    email: form.email,
+                    password: form.password,
+                    redirect: false,
+                });
+                router.push('/');
+                router.refresh();
             } else {
                 toast.error(data.error || 'Registration failed');
             }

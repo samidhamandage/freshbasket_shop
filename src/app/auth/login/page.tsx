@@ -25,6 +25,21 @@ export default function LoginPage() {
         e.preventDefault();
         setLoading(true);
         try {
+            // 1. Authenticate with FastAPI backend to set freshbasket_token cookie
+            const apiRes = await fetch('/api/auth/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password }),
+            });
+            const apiData = await apiRes.json().catch(() => ({}));
+
+            if (!apiRes.ok) {
+                toast.error(apiData.error || 'Invalid email or password');
+                setLoading(false);
+                return;
+            }
+
+            // 2. Set NextAuth session for frontend navigation and layout components
             const res = await signIn('credentials', {
                 email,
                 password,

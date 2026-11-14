@@ -94,7 +94,18 @@ async function getProducts(params: SearchParams) {
     return result;
 }
 
+const FASTAPI_URL = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000';
+
 async function getCategories() {
+    try {
+        const res = await fetch(`${FASTAPI_URL}/api/categories`, { next: { revalidate: 60 } });
+        if (res.ok) {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const data = await res.json();
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            return data.map((c: any) => ({ ...c, _count: { products: c.productCount } }));
+        }
+    } catch {}
     return prisma.category.findMany({
         include: { _count: { select: { products: true } } },
         orderBy: { name: 'asc' },

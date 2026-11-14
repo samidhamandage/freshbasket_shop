@@ -13,6 +13,7 @@ type User = {
     blocked: boolean;
     createdAt: string;
     _count?: { orders: number };
+    orderCount?: number;
 };
 
 export default function AdminUsersPage() {
@@ -111,7 +112,7 @@ export default function AdminUsersPage() {
                                                 <option value="USER">User</option>
                                             </select>
                                         </td>
-                                        <td className="py-3 px-4 text-charcoal-600">{user._count?.orders || 0}</td>
+                                        <td className="py-3 px-4 text-charcoal-600">{user._count?.orders ?? user.orderCount ?? 0}</td>
                                         <td className="py-3 px-4 text-charcoal-500 text-xs">{formatDateTime(user.createdAt)}</td>
                                         <td className="py-3 px-4">
                                             {user.blocked ? (

@@ -23,6 +23,37 @@ export const authOptions: NextAuthOptions = {
                     throw new Error('Invalid credentials');
                 }
 
+                // Authenticate through FastAPI backend
+                try {
+                    const res = await fetch('http://127.0.0.1:8000/api/auth/login', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            email: credentials.email,
+                            password: credentials.password,
+                        }),
+                    });
+
+                    if (res.ok) {
+                        const data = await res.json();
+                        return {
+                            id: data.user.id,
+                            email: data.user.email,
+                            name: data.user.name,
+                            role: data.user.role,
+                            image: data.user.image,
+                        };
+                    } else {
+                        const errData = await res.json().catch(() => ({}));
+                        throw new Error(errData.error || errData.detail || 'Invalid credentials');
+                    }
+                } catch (fetchErr: unknown) {
+                    if (fetchErr instanceof Error && fetchErr.message !== 'fetch failed') {
+                        throw fetchErr;
+                    }
+                }
+
+                // Fallback to database check if FastAPI backend is starting up
                 const user = await prisma.user.findUnique({
                     where: { email: credentials.email },
                 });

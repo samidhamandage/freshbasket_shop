@@ -5,22 +5,43 @@ export function formatPrice(price: number): string {
     }).format(price);
 }
 
+function parseDate(date: string | Date | number | null | undefined): Date {
+    if (!date) return new Date();
+    if (date instanceof Date) return date;
+    if (typeof date === 'number') return new Date(date);
+
+    let str = String(date).trim();
+    if (/^\d{4}-\d{2}-\d{2}\s\d{2}:\d{2}/.test(str)) {
+        str = str.replace(' ', 'T');
+    }
+    if (/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}/.test(str) && !str.endsWith('Z') && !/[+-]\d{2}(:?\d{2})?$/.test(str)) {
+        str += 'Z';
+    }
+    return new Date(str);
+}
+
 export function formatDate(date: string | Date): string {
+    const d = parseDate(date);
+    if (isNaN(d.getTime())) return '';
     return new Intl.DateTimeFormat('en-US', {
+        timeZone: 'Asia/Kolkata',
         year: 'numeric',
         month: 'long',
         day: 'numeric',
-    }).format(new Date(date));
+    }).format(d);
 }
 
 export function formatDateTime(date: string | Date): string {
+    const d = parseDate(date);
+    if (isNaN(d.getTime())) return '';
     return new Intl.DateTimeFormat('en-US', {
+        timeZone: 'Asia/Kolkata',
         year: 'numeric',
         month: 'short',
         day: 'numeric',
         hour: '2-digit',
         minute: '2-digit',
-    }).format(new Date(date));
+    }).format(d);
 }
 
 export function truncate(str: string, length: number): string {

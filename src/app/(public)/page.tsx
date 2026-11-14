@@ -18,7 +18,13 @@ export const metadata: Metadata = {
         'Discover the future of grocery shopping with AI recommendations, real-time order tracking, and premium fresh products delivered to your door.',
 };
 
+const FASTAPI_URL = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000';
+
 async function getFeaturedProducts() {
+    try {
+        const res = await fetch(`${FASTAPI_URL}/api/products?featured=true&limit=8`, { next: { revalidate: 60 } });
+        if (res.ok) return await res.json();
+    } catch {}
     return prisma.product.findMany({
         where: { featured: true },
         include: { category: true },
@@ -28,6 +34,15 @@ async function getFeaturedProducts() {
 }
 
 async function getCategories() {
+    try {
+        const res = await fetch(`${FASTAPI_URL}/api/categories`, { next: { revalidate: 60 } });
+        if (res.ok) {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const data = await res.json();
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            return data.map((c: any) => ({ ...c, _count: { products: c.productCount } }));
+        }
+    } catch {}
     return prisma.category.findMany({
         include: { _count: { select: { products: true } } },
         orderBy: { name: 'asc' },
@@ -35,6 +50,10 @@ async function getCategories() {
 }
 
 async function getRecommendedProducts() {
+    try {
+        const res = await fetch(`${FASTAPI_URL}/api/recommendations?limit=4`, { next: { revalidate: 60 } });
+        if (res.ok) return await res.json();
+    } catch {}
     return prisma.product.findMany({
         include: { category: true },
         orderBy: [{ reviewCount: 'desc' }, { rating: 'desc' }],

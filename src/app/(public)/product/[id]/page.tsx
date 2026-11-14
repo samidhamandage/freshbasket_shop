@@ -10,7 +10,13 @@ import { formatPrice, getStockLabel } from '@/utils';
 
 type Props = { params: { id: string } };
 
+const FASTAPI_URL = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000';
+
 async function getProduct(slug: string) {
+    try {
+        const res = await fetch(`${FASTAPI_URL}/api/products/${slug}`, { next: { revalidate: 60 } });
+        if (res.ok) return await res.json();
+    } catch {}
     const product = await prisma.product.findUnique({
         where: { slug },
         include: {
@@ -26,6 +32,10 @@ async function getProduct(slug: string) {
 }
 
 async function getRelatedProducts(categoryId: string, productId: string) {
+    try {
+        const res = await fetch(`${FASTAPI_URL}/api/recommendations?productId=${productId}&limit=4`, { next: { revalidate: 60 } });
+        if (res.ok) return await res.json();
+    } catch {}
     return prisma.product.findMany({
         where: { categoryId, id: { not: productId } },
         include: { category: true },

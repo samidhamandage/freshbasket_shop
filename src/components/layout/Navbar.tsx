@@ -32,6 +32,13 @@ export default function Navbar() {
         }
     };
 
+    const handleSignOut = () => {
+        if (typeof window !== 'undefined') {
+            sessionStorage.removeItem('freshbasket_session_active');
+        }
+        signOut({ callbackUrl: '/' });
+    };
+
     return (
         <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-charcoal-100 shadow-sm">
             <div className="container-custom">
@@ -137,7 +144,7 @@ export default function Navbar() {
                                                 </Link>
                                             )}
                                             <button
-                                                onClick={() => signOut()}
+                                                onClick={handleSignOut}
                                                 className="flex items-center gap-3 w-full px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 transition-colors"
                                             >
                                                 <LogOut className="w-4 h-4" />
@@ -217,7 +224,7 @@ export default function Navbar() {
                                         </Link>
                                     )}
                                     <button
-                                        onClick={() => signOut()}
+                                        onClick={handleSignOut}
                                         className="text-left px-4 py-3 text-sm font-medium text-red-600 hover:bg-red-50 rounded-xl"
                                     >
                                         Sign Out

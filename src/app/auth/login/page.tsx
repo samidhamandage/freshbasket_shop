@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { signIn } from 'next-auth/react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
@@ -16,6 +16,11 @@ export default function LoginPage() {
     const [showPassword, setShowPassword] = useState(false);
     const [loading, setLoading] = useState(false);
 
+    useEffect(() => {
+        setEmail('');
+        setPassword('');
+    }, []);
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
@@ -28,6 +33,9 @@ export default function LoginPage() {
             if (res?.error) {
                 toast.error(res.error === 'CredentialsSignin' ? 'Invalid email or password' : res.error);
             } else {
+                if (typeof window !== 'undefined') {
+                    sessionStorage.setItem('freshbasket_session_active', 'true');
+                }
                 toast.success('Welcome back!');
                 router.push(callbackUrl);
                 router.refresh();
@@ -57,7 +65,12 @@ export default function LoginPage() {
                 <div className="card p-6 sm:p-8">
                     {/* Google Sign In */}
                     <button
-                        onClick={() => signIn('google', { callbackUrl })}
+                        onClick={() => {
+                            if (typeof window !== 'undefined') {
+                                sessionStorage.setItem('freshbasket_session_active', 'true');
+                            }
+                            signIn('google', { callbackUrl });
+                        }}
                         className="w-full flex items-center justify-center gap-3 py-3 px-4 rounded-xl border border-charcoal-200 bg-white
               text-charcoal-700 font-medium hover:bg-charcoal-50 transition-colors mb-6"
                     >
@@ -79,17 +92,24 @@ export default function LoginPage() {
                         </div>
                     </div>
 
-                    <form onSubmit={handleSubmit} className="space-y-4">
+                    <form onSubmit={handleSubmit} autoComplete="off" className="space-y-4">
+                        {/* Hidden inputs to capture aggressive browser autofill */}
+                        <input type="text" name="prevent_autofill_email" id="prevent_autofill_email" defaultValue="" style={{ position: 'absolute', opacity: 0, height: 0, width: 0, zIndex: -1 }} tabIndex={-1} readOnly />
+                        <input type="password" name="prevent_autofill_password" id="prevent_autofill_password" defaultValue="" style={{ position: 'absolute', opacity: 0, height: 0, width: 0, zIndex: -1 }} tabIndex={-1} readOnly />
+
                         <div>
                             <label className="block text-sm font-medium text-charcoal-700 mb-1.5">Email</label>
                             <div className="relative">
                                 <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-charcoal-400" />
                                 <input
                                     type="email"
+                                    name="email"
+                                    id="login-email"
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
                                     className="input-field pl-10"
                                     placeholder="you@example.com"
+                                    autoComplete="off"
                                     required
                                 />
                             </div>
@@ -100,10 +120,13 @@ export default function LoginPage() {
                                 <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-charcoal-400" />
                                 <input
                                     type={showPassword ? 'text' : 'password'}
+                                    name="password"
+                                    id="login-password"
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
                                     className="input-field pl-10 pr-10"
                                     placeholder="••••••••"
+                                    autoComplete="new-password"
                                     required
                                 />
                                 <button

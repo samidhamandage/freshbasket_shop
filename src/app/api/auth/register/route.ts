@@ -11,7 +11,7 @@ export async function POST(request: NextRequest) {
         if (!parsed.success) {
             return NextResponse.json(
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                { error: (parsed.error as any).errors?.[0]?.message || 'Invalid data' },
+                { error: (parsed.error as any).issues?.[0]?.message || (parsed.error as any).errors?.[0]?.message || 'Invalid data' },
                 { status: 400 }
             );
         }

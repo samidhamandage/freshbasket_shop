@@ -8,6 +8,7 @@ from app.services.product_service import ProductService
 router = APIRouter(prefix="/api/products", tags=["Products"])
 
 @router.get("", response_model=List[ProductResponse])
+@router.get("/", response_model=List[ProductResponse])
 def get_products(
     category: Optional[str] = Query(None, description="Category slug"),
     featured: Optional[bool] = Query(None, description="Filter featured products"),

@@ -11,6 +11,7 @@ from app.sockets.socket_manager import emit_order_updated
 router = APIRouter(prefix="/api/orders", tags=["Orders"])
 
 @router.post("", response_model=OrderCreateResponse, status_code=status.HTTP_201_CREATED)
+@router.post("/", response_model=OrderCreateResponse, status_code=status.HTTP_201_CREATED)
 def create_order(
     data: OrderCreate,
     current_user: User = Depends(get_current_user),
@@ -20,6 +21,7 @@ def create_order(
     return OrderCreateResponse(orderId=order.id, message="Order created")
 
 @router.get("", response_model=List[OrderResponse])
+@router.get("/", response_model=List[OrderResponse])
 def get_orders(
     status: Optional[str] = Query(None),
     current_user: User = Depends(get_current_user),

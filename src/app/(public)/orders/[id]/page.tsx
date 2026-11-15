@@ -61,7 +61,7 @@ export default function OrderTrackingPage({ params }: { params: { id: string } }
     useEffect(() => {
         const fetchOrder = async () => {
             try {
-                const res = await fetch(`/api/orders/${params.id}`);
+                const res = await fetch(`/api/orders/${params.id}`, { credentials: 'include' });
                 if (res.ok) {
                     const data = await res.json();
                     setOrder(data);

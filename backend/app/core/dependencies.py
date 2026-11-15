@@ -35,10 +35,12 @@ def get_optional_user(
     payload = decode_token(token)
     if not payload:
         return None
-    user_id = payload.get("sub")
-    if not user_id:
-        return None
-    user = db.query(User).filter(User.id == user_id).first()
+    user_id = payload.get("sub") or payload.get("id")
+    user = None
+    if user_id:
+        user = db.query(User).filter(User.id == user_id).first()
+    if not user and payload.get("email"):
+        user = db.query(User).filter(User.email == payload.get("email")).first()
     if not user or user.blocked:
         return None
     return user
@@ -57,10 +59,12 @@ def get_current_user(
     payload = decode_token(token)
     if not payload:
         raise credentials_exception
-    user_id = payload.get("sub")
-    if not user_id:
-        raise credentials_exception
-    user = db.query(User).filter(User.id == user_id).first()
+    user_id = payload.get("sub") or payload.get("id")
+    user = None
+    if user_id:
+        user = db.query(User).filter(User.id == user_id).first()
+    if not user and payload.get("email"):
+        user = db.query(User).filter(User.email == payload.get("email")).first()
     if not user:
         raise credentials_exception
     if user.blocked:

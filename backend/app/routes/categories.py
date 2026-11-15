@@ -10,6 +10,7 @@ from app.schemas.category import CategoryResponse
 router = APIRouter(prefix="/api/categories", tags=["Categories"])
 
 @router.get("", response_model=List[CategoryResponse])
+@router.get("/", response_model=List[CategoryResponse])
 def get_categories(db: Session = Depends(get_db)):
     categories = db.query(Category).order_by(Category.name.asc()).all()
     # Compute product counts

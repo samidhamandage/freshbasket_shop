@@ -44,9 +44,14 @@ export default function AdminDashboardPage() {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        fetch('/api/admin/stats')
+        fetch('/api/admin/stats', { credentials: 'include' })
             .then((res) => res.json())
-            .then((d) => { setData(d); setLoading(false); })
+            .then((d) => {
+                if (d && !d.error && !d.detail) {
+                    setData(d);
+                }
+                setLoading(false);
+            })
             .catch(() => setLoading(false));
     }, []);
 

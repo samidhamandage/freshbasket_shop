@@ -28,36 +28,68 @@ const nextConfig = {
                 },
                 // Domain API Routes to FastAPI
                 {
-                    source: '/api/products/:path*',
-                    destination: `${FASTAPI_URL}/api/products/:path*`,
+                    source: '/api/products',
+                    destination: `${FASTAPI_URL}/api/products`,
                 },
                 {
-                    source: '/api/categories/:path*',
-                    destination: `${FASTAPI_URL}/api/categories/:path*`,
+                    source: '/api/products/:path+',
+                    destination: `${FASTAPI_URL}/api/products/:path+`,
                 },
                 {
-                    source: '/api/orders/:path*',
-                    destination: `${FASTAPI_URL}/api/orders/:path*`,
+                    source: '/api/categories',
+                    destination: `${FASTAPI_URL}/api/categories`,
                 },
                 {
-                    source: '/api/coupons/:path*',
-                    destination: `${FASTAPI_URL}/api/coupons/:path*`,
+                    source: '/api/categories/:path+',
+                    destination: `${FASTAPI_URL}/api/categories/:path+`,
                 },
                 {
-                    source: '/api/reviews/:path*',
-                    destination: `${FASTAPI_URL}/api/reviews/:path*`,
+                    source: '/api/orders',
+                    destination: `${FASTAPI_URL}/api/orders`,
                 },
                 {
-                    source: '/api/recommendations/:path*',
-                    destination: `${FASTAPI_URL}/api/recommendations/:path*`,
+                    source: '/api/orders/:path+',
+                    destination: `${FASTAPI_URL}/api/orders/:path+`,
                 },
                 {
-                    source: '/api/payments/:path*',
-                    destination: `${FASTAPI_URL}/api/payments/:path*`,
+                    source: '/api/coupons',
+                    destination: `${FASTAPI_URL}/api/coupons`,
                 },
                 {
-                    source: '/api/webhooks/:path*',
-                    destination: `${FASTAPI_URL}/api/webhooks/:path*`,
+                    source: '/api/coupons/:path+',
+                    destination: `${FASTAPI_URL}/api/coupons/:path+`,
+                },
+                {
+                    source: '/api/reviews',
+                    destination: `${FASTAPI_URL}/api/reviews`,
+                },
+                {
+                    source: '/api/reviews/:path+',
+                    destination: `${FASTAPI_URL}/api/reviews/:path+`,
+                },
+                {
+                    source: '/api/recommendations',
+                    destination: `${FASTAPI_URL}/api/recommendations`,
+                },
+                {
+                    source: '/api/recommendations/:path+',
+                    destination: `${FASTAPI_URL}/api/recommendations/:path+`,
+                },
+                {
+                    source: '/api/payments',
+                    destination: `${FASTAPI_URL}/api/payments`,
+                },
+                {
+                    source: '/api/payments/:path+',
+                    destination: `${FASTAPI_URL}/api/payments/:path+`,
+                },
+                {
+                    source: '/api/webhooks',
+                    destination: `${FASTAPI_URL}/api/webhooks`,
+                },
+                {
+                    source: '/api/webhooks/:path+',
+                    destination: `${FASTAPI_URL}/api/webhooks/:path+`,
                 },
                 {
                     source: '/api/admin/:path*',

@@ -13,10 +13,10 @@ export default function OrdersPage() {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        fetch('/api/orders')
+        fetch('/api/orders', { credentials: 'include' })
             .then((res) => res.json())
             .then((data) => {
-                setOrders(data);
+                setOrders(Array.isArray(data) ? data : []);
                 setLoading(false);
             })
             .catch(() => setLoading(false));
@@ -44,7 +44,7 @@ export default function OrdersPage() {
                         </div>
                     ))}
                 </div>
-            ) : orders.length === 0 ? (
+            ) : (!Array.isArray(orders) || orders.length === 0) ? (
                 <div className="text-center py-20">
                     <div className="w-20 h-20 bg-charcoal-50 rounded-full flex items-center justify-center mx-auto mb-6">
                         <Package className="w-10 h-10 text-charcoal-300" />
@@ -55,7 +55,7 @@ export default function OrdersPage() {
                 </div>
             ) : (
                 <div className="space-y-4">
-                    {orders.map((order) => {
+                    {(Array.isArray(orders) ? orders : []).map((order) => {
                         const statusInfo = getOrderStatusLabel(order.status);
                         return (
                             <Link key={order.id} href={`/orders/${order.id}`} className="card p-5 flex items-center justify-between group hover:border-primary-200 transition-colors">

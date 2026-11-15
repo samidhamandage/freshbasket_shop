@@ -28,9 +28,16 @@ export default function AdminOrdersPage() {
     const fetchOrders = async () => {
         try {
             const url = statusFilter ? `/api/orders?status=${statusFilter}` : '/api/orders';
-            const res = await fetch(url);
-            const data = await res.json();
-            setOrders(data);
+            const res = await fetch(url, { credentials: 'include' });
+            const data = await res.json().catch(() => []);
+            if (Array.isArray(data)) {
+                setOrders(data);
+            } else {
+                setOrders([]);
+                if (data?.error || data?.detail) {
+                    toast.error(data.error || data.detail);
+                }
+            }
         } catch { /* silent */ }
         setLoading(false);
     };
@@ -42,6 +49,7 @@ export default function AdminOrdersPage() {
         try {
             const res = await fetch(`/api/orders/${orderId}`, {
                 method: 'PATCH',
+                credentials: 'include',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ status: newStatus }),
             });
@@ -57,9 +65,10 @@ export default function AdminOrdersPage() {
         updateStatus(orderId, 'REFUNDED');
     };
 
-    const filtered = orders.filter(o =>
-        o.id.toLowerCase().includes(search.toLowerCase()) ||
-        o.shippingName.toLowerCase().includes(search.toLowerCase())
+    const safeOrders = Array.isArray(orders) ? orders : [];
+    const filtered = safeOrders.filter(o =>
+        (o.id?.toLowerCase() || '').includes(search.toLowerCase()) ||
+        (o.shippingName?.toLowerCase() || '').includes(search.toLowerCase())
     );
 
     return (
@@ -67,7 +76,7 @@ export default function AdminOrdersPage() {
             <div className="flex items-center justify-between">
                 <div>
                     <h1 className="text-2xl font-bold text-charcoal-900">Orders</h1>
-                    <p className="text-charcoal-500 text-sm mt-1">{orders.length} orders total</p>
+                    <p className="text-charcoal-500 text-sm mt-1">{safeOrders.length} orders total</p>
                 </div>
                 <button onClick={fetchOrders} className="btn-ghost flex items-center gap-2 text-sm">
                     <RefreshCw className="w-4 h-4" /> Refresh

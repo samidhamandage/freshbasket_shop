@@ -49,6 +49,7 @@ export default function CheckoutPage() {
         try {
             const res = await fetch('/api/orders', {
                 method: 'POST',
+                credentials: 'include',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     items: items.map((i) => ({ productId: i.id, quantity: i.quantity, price: i.price, name: i.name, image: i.image })),

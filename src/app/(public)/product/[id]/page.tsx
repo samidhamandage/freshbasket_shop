@@ -10,6 +10,16 @@ import { formatPrice, getStockLabel } from '@/utils';
 
 type Props = { params: { id: string } };
 
+type ProductReview = {
+    id: string;
+    rating: number;
+    comment: string;
+    createdAt: Date | string;
+    user: { name: string | null; image: string | null };
+};
+
+type ProductCardItem = React.ComponentProps<typeof ProductCard>['product'];
+
 const FASTAPI_URL = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000';
 
 async function getProduct(slug: string) {
@@ -195,7 +205,10 @@ export default async function ProductPage({ params }: Props) {
             {/* Reviews Section */}
             <ReviewSection
                 productId={product.id}
-                reviews={product.reviews.map(r => ({ ...r, createdAt: r.createdAt.toISOString() }))}
+                reviews={product.reviews.map((r: ProductReview) => ({
+                    ...r,
+                    createdAt: typeof r.createdAt === 'string' ? r.createdAt : new Date(r.createdAt).toISOString(),
+                }))}
                 rating={product.rating}
                 reviewCount={product.reviewCount}
             />
@@ -208,7 +221,7 @@ export default async function ProductPage({ params }: Props) {
                         <h2 className="section-title text-2xl">Customers Also Bought</h2>
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                        {related.map((p) => (
+                        {related.map((p: ProductCardItem) => (
                             <ProductCard key={p.id} product={p} />
                         ))}
                     </div>

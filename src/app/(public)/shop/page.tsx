@@ -94,9 +94,16 @@ async function getProducts(params: SearchParams) {
     return result;
 }
 
+type CategoryFilterItem = {
+    id: string;
+    name: string;
+    slug: string;
+    _count: { products: number };
+};
+
 const FASTAPI_URL = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000';
 
-async function getCategories() {
+async function getCategories(): Promise<CategoryFilterItem[]> {
     try {
         const res = await fetch(`${FASTAPI_URL}/api/categories`, { next: { revalidate: 60 } });
         if (res.ok) {
@@ -109,7 +116,7 @@ async function getCategories() {
     return prisma.category.findMany({
         include: { _count: { select: { products: true } } },
         orderBy: { name: 'asc' },
-    });
+    }) as unknown as CategoryFilterItem[];
 }
 
 export default async function ShopPage({

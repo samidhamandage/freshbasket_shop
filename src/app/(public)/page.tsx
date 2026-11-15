@@ -20,7 +20,9 @@ export const metadata: Metadata = {
 
 const FASTAPI_URL = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000';
 
-async function getFeaturedProducts() {
+type ProductItem = React.ComponentProps<typeof ProductCard>['product'];
+
+async function getFeaturedProducts(): Promise<ProductItem[]> {
     try {
         const res = await fetch(`${FASTAPI_URL}/api/products?featured=true&limit=8`, { next: { revalidate: 60 } });
         if (res.ok) return await res.json();
@@ -30,10 +32,19 @@ async function getFeaturedProducts() {
         include: { category: true },
         take: 8,
         orderBy: { rating: 'desc' },
-    });
+    }) as unknown as ProductItem[];
 }
 
-async function getCategories() {
+interface CategoryItem {
+    id: string;
+    name: string;
+    slug: string;
+    description?: string | null;
+    image?: string | null;
+    _count: { products: number };
+}
+
+async function getCategories(): Promise<CategoryItem[]> {
     try {
         const res = await fetch(`${FASTAPI_URL}/api/categories`, { next: { revalidate: 60 } });
         if (res.ok) {
@@ -46,10 +57,10 @@ async function getCategories() {
     return prisma.category.findMany({
         include: { _count: { select: { products: true } } },
         orderBy: { name: 'asc' },
-    });
+    }) as unknown as CategoryItem[];
 }
 
-async function getRecommendedProducts() {
+async function getRecommendedProducts(): Promise<ProductItem[]> {
     try {
         const res = await fetch(`${FASTAPI_URL}/api/recommendations?limit=4`, { next: { revalidate: 60 } });
         if (res.ok) return await res.json();
@@ -58,7 +69,7 @@ async function getRecommendedProducts() {
         include: { category: true },
         orderBy: [{ reviewCount: 'desc' }, { rating: 'desc' }],
         take: 4,
-    });
+    }) as unknown as ProductItem[];
 }
 
 export default async function HomePage() {
@@ -119,6 +130,7 @@ export default async function HomePage() {
                                         fill
                                         className="object-cover"
                                         priority
+                                        sizes="(max-width: 1024px) 100vw, 50vw"
                                     />
                                 </div>
                             </div>
@@ -166,7 +178,7 @@ export default async function HomePage() {
                     </Link>
                 </div>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    {categories.map((cat) => (
+                    {categories.map((cat, index) => (
                         <Link
                             key={cat.id}
                             href={`/shop?category=${cat.slug}`}
@@ -179,6 +191,7 @@ export default async function HomePage() {
                                     fill
                                     className="object-cover group-hover:scale-110 transition-transform duration-500"
                                     sizes="(max-width: 768px) 50vw, 25vw"
+                                    priority={index < 4}
                                 />
                             )}
                             <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
@@ -212,7 +225,7 @@ export default async function HomePage() {
                         {featured.map((product) => (
                             <ProductCard key={product.id} product={product} />
                         ))}
-                    </div>
+                    </div><i></i>
                 </div>
             </section>
 

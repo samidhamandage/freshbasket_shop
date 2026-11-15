@@ -17,6 +17,7 @@ class Settings(BaseSettings):
     REFRESH_TOKEN_EXPIRE_DAYS: int = 7
 
     FRONTEND_URL: str = "http://localhost:3000"
+    CORS_ORIGINS: str = ""
     REDIS_URL: str = "redis://localhost:6379"
 
     STRIPE_SECRET_KEY: str = ""

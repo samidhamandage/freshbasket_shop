@@ -25,7 +25,8 @@ export const authOptions: NextAuthOptions = {
 
                 // Authenticate through FastAPI backend
                 try {
-                    const res = await fetch('http://127.0.0.1:8000/api/auth/login', {
+                    const FASTAPI_URL = process.env.NEXT_PUBLIC_API_URL || process.env.API_URL || 'http://127.0.0.1:8000';
+                    const res = await fetch(`${FASTAPI_URL}/api/auth/login`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({

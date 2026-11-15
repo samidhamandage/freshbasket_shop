@@ -210,6 +210,27 @@ async function main() {
         },
     });
 
+    const formattedCoupons = [
+        { code: 'A1B2C3', discount: 10, type: 'percentage', minOrder: 500, maxUses: 1000 },
+        { code: 'X2Y5Z7', discount: 15, type: 'percentage', minOrder: 800, maxUses: 1000 },
+        { code: 'P8Q2R1', discount: 200, type: 'fixed', minOrder: 600, maxUses: 1000 },
+        { code: 'D4E5F6', discount: 12, type: 'percentage', minOrder: 500, maxUses: 1000 },
+        { code: 'G7H8J9', discount: 250, type: 'fixed', minOrder: 1000, maxUses: 1000 },
+        { code: 'K1L2M3', discount: 18, type: 'percentage', minOrder: 800, maxUses: 1000 },
+        { code: 'N4P5Q6', discount: 150, type: 'fixed', minOrder: 500, maxUses: 1000 },
+        { code: 'R7S8T9', discount: 20, type: 'percentage', minOrder: 1000, maxUses: 1000 },
+        { code: 'U1V2W3', discount: 300, type: 'fixed', minOrder: 1200, maxUses: 1000 },
+        { code: 'Z4A5B6', discount: 25, type: 'percentage', minOrder: 1500, maxUses: 1000 },
+    ];
+
+    for (const cp of formattedCoupons) {
+        await prisma.coupon.upsert({
+            where: { code: cp.code },
+            update: { discount: cp.discount, type: cp.type, minOrder: cp.minOrder, maxUses: cp.maxUses },
+            create: cp,
+        });
+    }
+
     console.log('✅ Seed completed successfully');
     console.log(`   Admin: admin@freshbasket.com / admin123`);
     console.log(`   User: user@freshbasket.com / user123`);

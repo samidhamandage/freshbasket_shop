@@ -25,7 +25,7 @@ export const authOptions: NextAuthOptions = {
 
                 // Authenticate through FastAPI backend
                 try {
-                    const FASTAPI_URL = process.env.NEXT_PUBLIC_API_URL || process.env.API_URL || 'http://127.0.0.1:8000';
+                    const FASTAPI_URL = process.env.NEXT_PUBLIC_API_URL || process.env.API_URL || 'https://freshbasket-shop.onrender.com';
                     const res = await fetch(`${FASTAPI_URL}/api/auth/login`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
@@ -121,5 +121,5 @@ export const authOptions: NextAuthOptions = {
         signIn: '/auth/login',
         error: '/auth/login',
     },
-    secret: process.env.NEXTAUTH_SECRET,
+    secret: process.env.NEXTAUTH_SECRET || 'freshbasket-secret-key-32characterslongmin123456',
 };

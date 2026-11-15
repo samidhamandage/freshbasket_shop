@@ -2,13 +2,12 @@
 
 import { useState, useEffect } from 'react';
 import { signIn } from 'next-auth/react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { Leaf, Mail, Lock, Eye, EyeOff } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 export default function LoginPage() {
-    const router = useRouter();
     const searchParams = useSearchParams();
     const callbackUrl = searchParams?.get('callbackUrl') || '/';
     const [email, setEmail] = useState('');

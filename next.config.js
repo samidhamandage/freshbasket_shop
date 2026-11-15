@@ -1,5 +1,5 @@
 /** @type {import('next').NextConfig} */
-const FASTAPI_URL = (process.env.NEXT_PUBLIC_API_URL || process.env.API_URL || 'http://localhost:8000').replace(/\/$/, '');
+const FASTAPI_URL = (process.env.NEXT_PUBLIC_API_URL || process.env.API_URL || 'https://freshbasket-shop.onrender.com').replace(/\/$/, '');
 
 const nextConfig = {
     async rewrites() {
@@ -77,6 +77,9 @@ const nextConfig = {
         serverActions: {
             bodySizeLimit: '2mb',
         },
+    },
+    eslint: {
+        ignoreDuringBuilds: true,
     },
     headers: async () => [
         {

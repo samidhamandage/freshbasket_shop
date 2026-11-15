@@ -5,13 +5,32 @@ import type { NextRequest } from 'next/server';
 export async function middleware(request: NextRequest) {
     const isHttps = request.nextUrl.protocol === 'https:' || request.headers.get('x-forwarded-proto') === 'https';
     const hasSecureCookie = request.cookies.has('__Secure-next-auth.session-token');
+    const secret = process.env.NEXTAUTH_SECRET || 'freshbasket-secret-key-32characterslongmin123456';
 
-    const token = await getToken({
+    let token = await getToken({
         req: request,
-        secret: process.env.NEXTAUTH_SECRET || 'freshbasket-secret-key-32characterslongmin123456',
+        secret,
         secureCookie: hasSecureCookie || isHttps,
         cookieName: hasSecureCookie ? '__Secure-next-auth.session-token' : 'next-auth.session-token',
     });
+
+    if (!token && hasSecureCookie) {
+        token = await getToken({
+            req: request,
+            secret,
+            secureCookie: true,
+            cookieName: '__Secure-next-auth.session-token',
+        });
+    }
+
+    if (!token && !hasSecureCookie) {
+        token = await getToken({
+            req: request,
+            secret,
+            secureCookie: false,
+            cookieName: 'next-auth.session-token',
+        });
+    }
     const { pathname } = request.nextUrl;
 
     // Admin routes protection

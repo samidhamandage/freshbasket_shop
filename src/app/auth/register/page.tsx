@@ -69,8 +69,7 @@ export default function RegisterPage() {
                     toast.error(signInRes.error === 'CredentialsSignin' ? 'Invalid credentials' : signInRes.error);
                 } else {
                     toast.success('Account created successfully!');
-                    router.push('/');
-                    router.refresh();
+                    window.location.href = '/';
                 }
             } else {
                 toast.error(data.error || 'Registration failed');

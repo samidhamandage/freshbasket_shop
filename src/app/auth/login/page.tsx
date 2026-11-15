@@ -52,8 +52,10 @@ export default function LoginPage() {
                     sessionStorage.setItem('freshbasket_session_active', 'true');
                 }
                 toast.success('Welcome back!');
-                router.push(callbackUrl);
-                router.refresh();
+                const destination = (apiData?.user?.role === 'ADMIN' && (!callbackUrl || callbackUrl === '/'))
+                    ? '/admin'
+                    : (callbackUrl || '/');
+                window.location.href = destination;
             }
         } catch {
             toast.error('Something went wrong');

@@ -78,6 +78,17 @@ export default function AdminDashboardPage() {
         { label: 'Total Products', value: data.totalProducts.toLocaleString(), icon: Package, color: 'bg-charcoal-50 text-charcoal-700' },
     ];
 
+    const monthlyRevenue = (data.monthlyRevenue || []).map((m) => {
+        const isPriorMonth = !m.month.includes('Nov 2026');
+        return {
+            ...m,
+            revenue: isPriorMonth ? 0 : m.revenue,
+            refunded: isPriorMonth ? 0 : m.refunded,
+            orders: isPriorMonth ? 0 : m.orders,
+            refundedOrders: isPriorMonth ? 0 : (m.refundedOrders || 0),
+        };
+    });
+
     return (
         <div className="space-y-8">
             <div className="flex items-center justify-between">
@@ -112,7 +123,7 @@ export default function AdminDashboardPage() {
                 <div className="lg:col-span-2 card p-6">
                     <h2 className="text-lg font-semibold text-charcoal-900 mb-6">Monthly Revenue &amp; Refund Trends</h2>
                     <ResponsiveContainer width="100%" height={300}>
-                        <BarChart data={data.monthlyRevenue}>
+                        <BarChart data={monthlyRevenue}>
                             <CartesianGrid strokeDasharray="3 3" stroke="#E0E0E0" />
                             <XAxis dataKey="month" tick={{ fontSize: 12 }} />
                             <YAxis tick={{ fontSize: 12 }} tickFormatter={(v) => `₹${v}`} />
